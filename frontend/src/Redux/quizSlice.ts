@@ -1,102 +1,121 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Question } from '../Models/Question';
+import { SelectedAnswer } from '../Models/SelectedAnswer';
+import { Profession } from '../Models/Profession';
+import { AnswerOption } from '../Models/AnswerOption';
 
 export interface QuizState {
-  questions: {
-    id: number;
-    question: string;
-    option: {
-      text: string;
-      professionScore: Record<string, number>;
-    }[];
-  }[];
+  questions: Question[];
   currentIndexOfQuestion: number;
-  selectedAnswers: string[];
+  selectedAnswers: SelectedAnswer[];
 }
 
+const questions: Question[] = [
+  {
+    id: 1,
+    questionText: '1. What type of work environment do you prefer?',
+    answerOptions: [
+      {
+        text: 'Working with technology and machinery.',
+        professions: [
+          { name: 'Automation Electrician', score: 1 } as Profession,
+          { name: 'Industrial Electrician', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Leading teams and managing projects.',
+        professions: [
+          { name: 'Project Manager', score: 1 } as Profession,
+          { name: 'Supervisor', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Designing and constructing electrical systems.',
+        professions: [
+          { name: 'Electrical Designer', score: 1 } as Profession,
+          { name: 'Construction Electrician', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Sales and communication with clients.',
+        professions: [
+          { name: 'Technical Sales', score: 1 } as Profession,
+          { name: 'Project Sales', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+    ] as Array<AnswerOption>,
+  } as Question,
+  {
+    id: 2,
+    questionText: '2. What motivates you the most in a job?',
+    answerOptions: [
+      {
+        text: 'Practical and hands-on work.',
+        professions: [
+          { name: 'Service Electrician', score: 1 } as Profession,
+          { name: 'Installation Electrician', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Opportunities to innovate and create.',
+        professions: [
+          { name: 'Entrepreneur', score: 1 } as Profession,
+          { name: 'Solar Installer', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Solving complex technical problems.',
+        professions: [
+          { name: 'Alarm/Security Technician', score: 1 } as Profession,
+          { name: 'Elevator Technician', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+
+      {
+        text: 'Teaching and sharing knowledge.',
+        professions: [
+          { name: 'Vocational Teacher', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+    ] as Array<AnswerOption>,
+  } as Question,
+  {
+    id: 3,
+    questionText: '3. How do you handle responsibility?',
+    answerOptions: [
+      {
+        text: 'Taking the lead and making decisions.',
+        professions: [
+          { name: 'CEO', score: 1 } as Profession,
+          { name: 'Division Manager', score: 1 } as Profession,
+        ],
+      } as AnswerOption,
+      {
+        text: 'Managing financial aspects of projects.',
+        professions: [
+          { name: 'Estimator', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+      {
+        text: 'Ensuring safety and compliance.',
+        professions: [
+          { name: 'Alarm/Security Technician', score: 1 } as Profession,
+          { name: 'Project Manager', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+
+      {
+        text: 'Working independently and managing my own business.',
+        professions: [
+          { name: 'Entrepreneur', score: 1 } as Profession,
+        ] as Profession[],
+      } as AnswerOption,
+    ] as Array<AnswerOption>,
+  } as Question,
+];
+
 const initialState: QuizState = {
-  questions: [
-    {
-      id: 1,
-      question: '1. What type of work environment do you prefer?',
-      option: [
-        {
-          text: 'Working with technology and machinery.',
-          professionScore: {
-            'Automation Electrician': 1,
-            'Industrial Electrician': 1,
-          },
-        },
-        {
-          text: 'Leading teams and managing projects.',
-          professionScore: { 'Project Manager': 1, Supervisor: 1 },
-        },
-        {
-          text: 'Designing and constructing electrical systems.',
-          professionScore: {
-            'Electrical Designer': 1,
-            'Construction Electrician': 1,
-          },
-        },
-        {
-          text: 'Sales and communication with clients.',
-          professionScore: { 'Technical Sales': 1, 'Project Sales': 1 },
-        },
-      ],
-    },
-    {
-      id: 2,
-      question: '2. What motivates you the most in a job?',
-      option: [
-        {
-          text: 'Practical and hands-on work.',
-          professionScore: {
-            'Service Electrician': 1,
-            'Installation Electrician': 1,
-          },
-        },
-        {
-          text: 'Opportunities to innovate and create.',
-          professionScore: { Entrepreneur: 1, 'Solar Installer': 1 },
-        },
-        {
-          text: 'Solving complex technical problems.',
-          professionScore: {
-            'Alarm/Security Technician': 1,
-            'Elevator Technician': 1,
-          },
-        },
-        {
-          text: 'Teaching and sharing knowledge.',
-          professionScore: { 'Vocational Teacher': 1 },
-        },
-      ],
-    },
-    {
-      id: 3,
-      question: '3. How do you handle responsibility?',
-      option: [
-        {
-          text: 'Taking the lead and making decisions.',
-          professionScore: { CEO: 1, 'Division Manager': 1 },
-        },
-        {
-          text: 'Managing financial aspects of projects.',
-          professionScore: { Estimator: 1 },
-        },
-        {
-          text: 'Ensuring safety and compliance.',
-          professionScore: {
-            'Alarm/Security Technician': 1,
-            'Project Manager': 1,
-          },
-        },
-        {
-          text: 'Working independently and managing my own business.',
-          professionScore: { Entrepreneur: 1 },
-        },
-      ],
-    },
-  ],
+  questions: questions,
   currentIndexOfQuestion: 0,
   selectedAnswers: [],
 };
@@ -115,14 +134,16 @@ export const quizSlice = createSlice({
         state.currentIndexOfQuestion -= 1;
       }
     },
-    selectAnswer: (
-      state,
-      action: PayloadAction<{ questionId: number; answerText: string }>
-    ) => {
-      // 这里使用了 解构赋值，从 action.payload 中提取出 questionId 和 answerText。
-      const { questionId, answerText } = action.payload;
-      console.log(action.payload);
-      state.selectedAnswers[questionId] = answerText;
+    selectAnswer: (state, action: PayloadAction<SelectedAnswer>) => {
+      const { id, answer } = action.payload;
+      //Set the function to change the answer
+      state.selectedAnswers = state.selectedAnswers.map((selected) =>
+        selected.id === id ? { ...selected, answer } : selected
+      );
+      if (!state.selectedAnswers.some((selected) => selected.id === id)) {
+        state.selectedAnswers.push(action.payload);
+      }
+      console.log('Action:', action.payload);
     },
     resetQuiz: (state) => {
       state.selectedAnswers = [];

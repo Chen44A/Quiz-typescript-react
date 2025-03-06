@@ -8,18 +8,34 @@ import {
   selectAnswer,
 } from '../Redux/quizSlice';
 import { Result } from '../Components/Result';
+import { useState } from 'react';
+import { AnswerOption } from '../Models/AnswerOption';
 
 export const Quiz = () => {
   const dispatch = useDispatch();
+  const [radioBtnChecked, setRadioBtnChecked] = useState(false);
+  const [message, setMessage] = useState('');
+  const [showResult, setShowResult] = useState(false);
   const { questions, currentIndexOfQuestion, selectedAnswers } = useSelector(
     (store: RootState) => store.quiz
   );
-
   const currentQuestion = questions[currentIndexOfQuestion];
+  console.log(currentQuestion);
+
   const isLast = currentIndexOfQuestion === questions.length - 1;
 
-  const handleOptionChange = (questionId: number, answerText: string) => {
-    dispatch(selectAnswer({ questionId, answerText }));
+  const handleOptionChange = (
+    questionId: number,
+    answerOption: AnswerOption
+  ) => {
+    setRadioBtnChecked(true);
+    setMessage('');
+    dispatch(
+      selectAnswer({
+        id: questionId,
+        answer: answerOption,
+      })
+    );
   };
 
   const handlePreviousQuestion = () => {
@@ -27,56 +43,79 @@ export const Quiz = () => {
   };
 
   const handleNextQuestion = () => {
-    dispatch(nextQuestion());
+    if (radioBtnChecked) {
+      dispatch(nextQuestion());
+      setRadioBtnChecked(false);
+    } else {
+      setMessage('Välj ett svarsalternativ för att gå vidare.');
+    }
   };
 
-  if (isLast && selectedAnswers[currentQuestion.id]) {
-    return <Result />;
-  }
+  const handleShowResult = () => {
+    if (radioBtnChecked) {
+      setShowResult(true);
+    } else {
+      setMessage('Du måste slutföra alla frågor innan resultatet visas.');
+    }
+  };
 
   return (
     <>
-      <ProgressBar />
-
-      <div>
-        <h4>{currentQuestion.question}</h4>
-        {currentQuestion.option.map((opt, i) => (
-          <div key={i}>
-            <input
-              type='radio'
-              id={`option-${currentQuestion.id}-${i}`}
-              name={`question-${currentQuestion.id}`}
-              value={opt.text}
-              checked={selectedAnswers[currentQuestion.id] === opt.text}
-              onChange={() => handleOptionChange(currentQuestion.id, opt.text)}
-            />
-            <label htmlFor={`option-${currentQuestion.id}-${i}`}>
-              {opt.text}
-            </label>
+      {showResult ? (
+        <Result />
+      ) : (
+        <section>
+          <ProgressBar />
+          <div>
+            <h4>{currentQuestion.questionText}</h4>
+            {currentQuestion.answerOptions.map((opt, i) => (
+              <div key={i}>
+                <input
+                  type='radio'
+                  id={`option-${currentQuestion.id}-${i}`}
+                  name={`question-${currentQuestion.id}`}
+                  value={opt.text}
+                  checked={selectedAnswers?.some(
+                    (selected) =>
+                      selected.id === currentQuestion.id &&
+                      selected.answer.text === opt.text
+                  )}
+                  onChange={() => handleOptionChange(currentQuestion.id, opt)}
+                />
+                <label htmlFor={`option-${currentQuestion.id}-${i}`}>
+                  {opt.text}
+                </label>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          <div>
+            <button
+              className={styles.previousBtn}
+              onClick={handlePreviousQuestion}
+              disabled={currentIndexOfQuestion === 0}
+            >
+              Föregående
+            </button>
 
-      <div>
-        <button
-          className={styles.previousBtn}
-          onClick={handlePreviousQuestion}
-          disabled={currentIndexOfQuestion === 0}
-        >
-          Föregående
-        </button>
-
-        <button
-          className={styles.nextBtn}
-          onClick={handleNextQuestion}
-          disabled={
-            !selectedAnswers[currentQuestion.id] ||
-            currentIndexOfQuestion === questions.length - 1
-          }
-        >
-          {isLast ? 'Visa reslutat' : 'Nästa'}
-        </button>
-      </div>
+            {isLast ? (
+              <button className={styles.nextBtn} onClick={handleShowResult}>
+                Visa resultat
+              </button>
+            ) : (
+              <button
+                className={styles.nextBtn}
+                onClick={handleNextQuestion}
+                disabled={currentIndexOfQuestion === questions.length - 1}
+              >
+                Nästa
+              </button>
+            )}
+          </div>
+          <div className='mt-3'>
+            <p>{message}</p>
+          </div>
+        </section>
+      )}
     </>
   );
 };
