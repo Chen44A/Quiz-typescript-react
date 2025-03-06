@@ -135,12 +135,16 @@ export const quizSlice = createSlice({
       }
     },
     selectAnswer: (state, action: PayloadAction<SelectedAnswer>) => {
-      const { id, answer } = action.payload;
+      const { questionId, answer } = action.payload;
       //Set the function to change the answer
       state.selectedAnswers = state.selectedAnswers.map((selected) =>
-        selected.id === id ? { ...selected, answer } : selected
+        selected.questionId === questionId ? { ...selected, answer } : selected
       );
-      if (!state.selectedAnswers.some((selected) => selected.id === id)) {
+      if (
+        !state.selectedAnswers.some(
+          (selected) => selected.questionId === questionId
+        )
+      ) {
         state.selectedAnswers.push(action.payload);
       }
       console.log('Action:', action.payload);

@@ -1,6 +1,6 @@
 import { AnswerOption } from './AnswerOption';
 
 export interface SelectedAnswer {
-  id: number;
+  questionId: number;
   answer: AnswerOption;
 }

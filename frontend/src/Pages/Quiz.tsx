@@ -13,14 +13,14 @@ import { AnswerOption } from '../Models/AnswerOption';
 
 export const Quiz = () => {
   const dispatch = useDispatch();
-  const [radioBtnChecked, setRadioBtnChecked] = useState(false);
   const [message, setMessage] = useState('');
   const [showResult, setShowResult] = useState(false);
   const { questions, currentIndexOfQuestion, selectedAnswers } = useSelector(
     (store: RootState) => store.quiz
   );
   const currentQuestion = questions[currentIndexOfQuestion];
-  console.log(currentQuestion);
+  console.log('🌸 currentQuestion: ', currentQuestion);
+  console.log('🎯 selectedAnswers: ', selectedAnswers);
 
   const isLast = currentIndexOfQuestion === questions.length - 1;
 
@@ -28,11 +28,10 @@ export const Quiz = () => {
     questionId: number,
     answerOption: AnswerOption
   ) => {
-    setRadioBtnChecked(true);
     setMessage('');
     dispatch(
       selectAnswer({
-        id: questionId,
+        questionId,
         answer: answerOption,
       })
     );
@@ -43,26 +42,37 @@ export const Quiz = () => {
   };
 
   const handleNextQuestion = () => {
-    if (radioBtnChecked) {
+    const isAnswered = selectedAnswers.some(
+      (selected) => selected.questionId === currentQuestion.id
+    );
+    if (isAnswered) {
       dispatch(nextQuestion());
-      setRadioBtnChecked(false);
+      setMessage('');
     } else {
       setMessage('Välj ett svarsalternativ för att gå vidare.');
     }
   };
 
   const handleShowResult = () => {
-    if (radioBtnChecked) {
+    const isAnswered = selectedAnswers.some(
+      (selected) => selected.questionId === currentQuestion.id
+    );
+
+    if (isAnswered) {
       setShowResult(true);
     } else {
       setMessage('Du måste slutföra alla frågor innan resultatet visas.');
     }
   };
 
+  const uppdateResultStatus = (newStatus: boolean): void => {
+    setShowResult(newStatus);
+  };
+
   return (
     <>
       {showResult ? (
-        <Result />
+        <Result uppdateResultStatus={uppdateResultStatus} />
       ) : (
         <section>
           <ProgressBar />
@@ -77,7 +87,7 @@ export const Quiz = () => {
                   value={opt.text}
                   checked={selectedAnswers?.some(
                     (selected) =>
-                      selected.id === currentQuestion.id &&
+                      selected.questionId === currentQuestion.id &&
                       selected.answer.text === opt.text
                   )}
                   onChange={() => handleOptionChange(currentQuestion.id, opt)}
