@@ -19,7 +19,7 @@ export const Quiz = () => {
     (store: RootState) => store.quiz
   );
   const currentQuestion = questions[currentIndexOfQuestion];
-  console.log('🌸 currentQuestion: ', currentQuestion);
+  // console.log('🌸 currentQuestion: ', currentQuestion);
   console.log('🎯 selectedAnswers: ', selectedAnswers);
 
   const isLast = currentIndexOfQuestion === questions.length - 1;

@@ -52,7 +52,7 @@ const questions: Question[] = [
       {
         text: 'Practical and hands-on work.',
         professions: [
-          { name: 'Service Electrician', score: 1 } as Profession,
+          { name: 'Automation Electrician', score: 1 } as Profession,
           { name: 'Installation Electrician', score: 1 } as Profession,
         ] as Profession[],
       } as AnswerOption,
@@ -86,8 +86,8 @@ const questions: Question[] = [
       {
         text: 'Taking the lead and making decisions.',
         professions: [
+          { name: 'Automation Electrician', score: 1 } as Profession,
           { name: 'CEO', score: 1 } as Profession,
-          { name: 'Division Manager', score: 1 } as Profession,
         ],
       } as AnswerOption,
       {
@@ -147,7 +147,7 @@ export const quizSlice = createSlice({
       ) {
         state.selectedAnswers.push(action.payload);
       }
-      console.log('Action:', action.payload);
+      // console.log('Action:', action.payload);
     },
     resetQuiz: (state) => {
       state.selectedAnswers = [];
